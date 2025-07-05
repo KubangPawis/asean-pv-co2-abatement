@@ -46,9 +46,45 @@ View(long_format_data)
 
 
 # Read dataset Grid Emission
-dataset2 <- "IGES_GRID_EF_v11.6_20250226.xlsx"
+dataset_file <- "IGES_GRID_EF_v11.6_20250226.xlsx"
+sheet_name <- "EFfromCountriesOrSB"
 
+asean_countries2 <- c(
+    "Brunei Darussalam",
+    "Cambodia",
+    "Indonesia",
+    "Lao PDR",
+    "Malaysia",
+    "Myanmar",
+    "Philippines",
+    "Singapore",
+    "Thailand",
+    "Viet Nam"
+)
 
+all_data <- read_excel(dataset_file, sheet = sheet_name, skip = 3)
 
+asean_data <- all_data %>%
+    fill(...1, ...2, .direction = "down") %>%
 
+    rename(
+        Country = ...1,
+        Region_Grid = ...2,
+        Publisher = ...3,
+        Data_Vintage = ...4,
+        Method = ...5,
+        Applicability_Wind_Solar = `Wind and\r\nsolar power`,
+        Applicability_Other = `Other than wind and solar power`,
+        Crediting_Period_1 = `First crediting period`,
+        Crediting_Period_2 = `Second crediting period`,
+        Crediting_Period_3 = `Third crediting period`,
+        Notes = ...31,
+        Sources = ...32,
+        URLs = ...33
+    ) %>%
+
+    # Now the filter works perfectly on the cleaned 'Country' column
+    filter(Country %in% asean_countries2)
+
+view(asean_data)
 
