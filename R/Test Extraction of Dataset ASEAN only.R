@@ -24,7 +24,7 @@ asean_countries <- c(
     "Vietnam"
 )
 
-
+# filtering the data to display ASEAN Countries only
 asean_co2_data <- read_dataset %>%
     filter(Country %in% asean_countries)
 
