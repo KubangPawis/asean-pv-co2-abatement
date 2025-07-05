@@ -45,6 +45,9 @@ long_format_data <- sorted_asean_data %>%
 # View the spreadsheet extract
 View(long_format_data)
 
+# Export it to csv format
+write_csv(long_format_data, "asean_co2_emissions.csv")
+
 
 
 # Read dataset Grid Emission
@@ -64,7 +67,7 @@ asean_countries2 <- c(
     "Viet Nam"
 )
 
-all_data <- read_excel(dataset2, sheet = sheet_name, skip = 3)
+all_data <- read_excel(dataset2, sheet = sheet_name2, skip = 3)
 
 asean_data <- all_data %>%
     fill(...1, ...2, .direction = "down") %>%
@@ -89,6 +92,9 @@ asean_data <- all_data %>%
     filter(Country %in% asean_countries2)
 
 view(asean_data)
+
+# Export it to csv format file
+write_csv(asean_data, "asean_GridEmission.csv")
 
 # Read dataset HouseHold Size
 dataset3<- "Household Size and Composition.xlsx"
@@ -120,6 +126,9 @@ asean_household_data <- read_excel(
 
 view(asean_household_data)
 
+# Export the data in csv format file
+write_csv(asean_household_data, "asean_Household.csv")
+
 # Read dataset Global Electricity Demand
 dataset4<- "Global Electricity Demand and Generation Dataset.csv"
 
@@ -141,3 +150,6 @@ asean_electricity_data <- read_csv(dataset4) %>%
     arrange(entity, year)
 
 view(asean_electricity_data)
+
+# Export to csv file format
+write_csv(asean_electricity_data, "asean_Electricity.csv")
