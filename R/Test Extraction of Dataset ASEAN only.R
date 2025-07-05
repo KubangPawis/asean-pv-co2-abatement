@@ -1,7 +1,9 @@
 # use tidyverse for data manipulation
 # use readxl for reading excel files
+# use janitor for cleaning missing values
 library("readxl")
 library("tidyverse")
+library("janitor")
 
 # Read dataset carbon emission
 dataset1 <- "IEA-EDGAR fossil CO2 emissions.xlsx"
@@ -46,8 +48,8 @@ View(long_format_data)
 
 
 # Read dataset Grid Emission
-dataset_file <- "IGES_GRID_EF_v11.6_20250226.xlsx"
-sheet_name <- "EFfromCountriesOrSB"
+dataset2 <- "IGES_GRID_EF_v11.6_20250226.xlsx"
+sheet_name2 <- "EFfromCountriesOrSB"
 
 asean_countries2 <- c(
     "Brunei Darussalam",
@@ -62,7 +64,7 @@ asean_countries2 <- c(
     "Viet Nam"
 )
 
-all_data <- read_excel(dataset_file, sheet = sheet_name, skip = 3)
+all_data <- read_excel(dataset2, sheet = sheet_name, skip = 3)
 
 asean_data <- all_data %>%
     fill(...1, ...2, .direction = "down") %>%
@@ -88,3 +90,54 @@ asean_data <- all_data %>%
 
 view(asean_data)
 
+# Read dataset HouseHold Size
+dataset3<- "Household Size and Composition.xlsx"
+sheet_name3 <- "HH size and composition 2022"
+
+asean_countries3 <- c(
+    "Brunei Darussalam",
+    "Cambodia",
+    "Indonesia",
+    "Lao People's Dem. Republic",
+    "Malaysia",
+    "Myanmar",
+    "Philippines",
+    "Singapore",
+    "Thailand",
+    "Viet Nam"
+)
+
+asean_household_data <- read_excel(
+    dataset3,
+    sheet = sheet_name3,
+    # Skip the first 4 rows of titles and blank lines.
+    # Row 5 will be used as the header.
+    skip = 4
+) %>%
+    # Use clean_names() to automatically fix all the messy, multi-line headers.
+    clean_names() %>%
+    filter(country_or_area %in% asean_countries3)
+
+view(asean_household_data)
+
+# Read dataset Global Electricity Demand
+dataset4<- "Global Electricity Demand and Generation Dataset.csv"
+
+asean_countries4 <- c(
+    "Cambodia",
+    "Indonesia",
+    "Laos",
+    "Malaysia",
+    "Myanmar",
+    "Philippines",
+    "Singapore",
+    "Thailand",
+    "VietNam"
+)
+
+asean_electricity_data <- read_csv(dataset4) %>%
+    clean_names() %>%
+    filter(entity %in% asean_countries4) %>%
+    arrange(entity, year)
+
+view(asean_electricity_data)
