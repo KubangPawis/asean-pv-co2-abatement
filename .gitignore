@@ -1,0 +1,6 @@
+.Rproj.user
+
+# renv private package library
+renv/library
+renv/staging
+renv/cache

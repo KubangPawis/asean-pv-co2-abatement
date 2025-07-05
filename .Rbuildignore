@@ -1,0 +1,10 @@
+^renv$
+^renv\.lock$
+^AseanPVCO2Abatement\.Rproj$
+^\.Rproj\.user$
+^README\.qmd$
+^README-.*\.png$
+^CONDUCT\.md$
+^CONTRIBUTING\.md$
+^\.binder/Dockerfile$
+^\.binder$
