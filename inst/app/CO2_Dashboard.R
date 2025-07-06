@@ -3,7 +3,8 @@ library(shinydashboard)
 library(ggplot2)
 
 # Load data
-emissions_data <- read.csv("asean_co2_emissions.csv")
+emissions_data_path <- file.path("..", "..", "data-raw", "interim", "asean_co2_emissions.csv")
+emissions_data <- read.csv(emissions_data_path)
 
 # Ensure Year is integer
 emissions_data$Year <- as.integer(emissions_data$Year)
