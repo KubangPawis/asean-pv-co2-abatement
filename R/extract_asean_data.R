@@ -62,8 +62,8 @@ if (!file.exists(out_csv)) {
 #//////////////////////////////////////////////////////////////////
 
 # Read dataset Grid Emission
-dataset2 <- file.path("data-raw", "IGES_GRID_EF_v11.6_20250226.xlsx")
-sheet_name2 <- "EFfromCountriesOrSB"
+grid_emission_path <- file.path("data-raw", "IGES_GRID_EF_v11.6_20250226.xlsx")
+target_sheet_name <- "SummaryEFfromCDM"
 
 asean_countries2 <- c(
     "Brunei Darussalam",
@@ -78,37 +78,22 @@ asean_countries2 <- c(
     "Viet Nam"
 )
 
-all_data <- read_excel(dataset2, sheet = sheet_name2, skip = 3)
+ds_grid_emission <- read_excel(grid_emission_path, sheet = target_sheet_name, skip = 1, col_names = TRUE)
 
-asean_data <- all_data %>%
-    fill(...1, ...2, .direction = "down") %>%
-
-    rename(
-        Country = ...1,
-        Region_Grid = ...2,
-        Publisher = ...3,
-        Data_Vintage = ...4,
-        Method = ...5,
-        Applicability_Wind_Solar = `Wind and\r\nsolar power`,
-        Applicability_Other = `Other than wind and solar power`,
-        Crediting_Period_1 = `First crediting period`,
-        Crediting_Period_2 = `Second crediting period`,
-        Crediting_Period_3 = `Third crediting period`,
-        Notes = ...31,
-        Sources = ...32,
-        URLs = ...33
+ds_grid_emission_asean <- ds_grid_emission %>%
+    select(
+        country = "Host Party...2",
+        mean_combined_margin_ef = "Combined Margin EF (Average)"
     ) %>%
+    filter(country %in% asean_countries2)
 
-    # Now the filter works perfectly on the cleaned 'Country' column
-    filter(Country %in% asean_countries2)
-
-View(asean_data)
+View(ds_grid_emission_asean)
 
 # Export it to csv format file
 
 out_csv <- file.path("data", "asean_GridEmission.csv")
 if (!file.exists(out_csv)) {
-    write_csv(asean_data, out_csv)
+    write_csv(ds_grid_emission_asean, out_csv)
     message(out_csv, " successfully created")
 } else {
     message("Skipped writing ", out_csv, "; file already exists.")
