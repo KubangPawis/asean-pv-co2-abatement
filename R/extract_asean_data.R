@@ -83,7 +83,10 @@ ds_grid_emission <- read_excel(grid_emission_path, sheet = target_sheet_name, sk
 ds_grid_emission_asean <- ds_grid_emission %>%
     select(
         country = "Host Party...2",
-        mean_combined_margin_ef = "Combined Margin EF (Average)"
+        ef_kgco2_per_kwh = "Combined Margin EF (Average)"
+    ) %>%
+    mutate(
+        ef_gco2_per_kwh = ef_kgco2_per_kwh * 1000 # from kg to g
     ) %>%
     filter(country %in% asean_countries2)
 
