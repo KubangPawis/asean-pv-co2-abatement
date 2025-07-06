@@ -32,13 +32,21 @@ results_ds <- scenarios %>%
 View(results_ds)
 
 ## Helper Function for Dashboard
-compute_abatement <- function(df, pv_size, target_reduc, hours_per_yr=8760) {
+compute_abatement <- function(df, pv_size, target_reduc, target_country, hours_per_yr=8760, round_to=0) {
     df %>%
         mutate(
             annual_pv_electricity_per_home = pv_size * hours_per_yr * solar_capacity_factor,
             co2_avoided_per_home = annual_pv_electricity_per_home * ef_gco2_per_kwh,
             homes_required = (target_reduc * co2_emissions_g) / co2_avoided_per_home
-        )
+        ) %>%
+        filter(country == target_country) %>%
+        pull(homes_required) %>%
+        # anonymous function to ensure NA when country not found
+        {
+            if (length(.) == 0) NA_real_
+            else if (!is.na(round_to)) round(., round_to)
+            else .
+        }
 }
 
 # [Data Export]
