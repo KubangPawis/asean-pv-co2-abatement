@@ -223,6 +223,7 @@ asean_pv_data <- list.files(
     )
 
 print(asean_pv_data)
+View(asean_pv_data)
 
 # Export the data in csv format file
 out_csv <- file.path("data", "asean_PV.csv")
