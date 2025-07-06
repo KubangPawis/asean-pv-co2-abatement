@@ -14,6 +14,8 @@ Imports:
     dplyr,
     janitor,
     magrittr,
+    purrr,
     readr,
     readxl (>=1.4.5),
+    stringr,
     tidyr
