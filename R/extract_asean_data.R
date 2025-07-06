@@ -6,6 +6,8 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(magrittr)
+library(purrr)
+library(stringr)
 library(janitor)
 
 # Read dataset carbon emission
@@ -181,6 +183,61 @@ View(asean_electricity_data)
 out_csv <- file.path("data", "asean_Electricity.csv")
 if (!file.exists(out_csv)) {
     write_csv(asean_electricity_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
+
+#//////////////////////////////////////////////////////////////////
+
+ds_pv_dir <- file.path("data-raw", "asean_pv_output")
+target_sheet_name <- "PVOUT_stats"
+cell_ref <- "B4"
+
+# Function to extract PVOUTPUT average from GSA data
+get_pv_out_avg <- function(path, sheet = target_sheet_name, cell = cell_ref) {
+    if (!(sheet %in% excel_sheets(path)))
+        return(NA)
+
+    read_excel(
+        path,
+        sheet = sheet,
+        range = cell,
+        col_names = FALSE
+    ) %>%
+        pull(1)
+}
+
+asean_pv_data <- list.files(
+    ds_pv_dir,
+    pattern = "\\.xlsx$",
+    full.names = TRUE
+    ) %>%
+    map_dfr(
+        ~ tibble(
+            country = basename(.x) %>%
+                str_remove("^GSA_Report_") %>%
+                str_remove(".xlsx$"),
+            pv_average = get_pv_out_avg(.x)
+        ),
+        .id = NULL
+    ) %>%
+    mutate(
+        country = recode(
+            country,
+            "Brunei Darussalam"                 = "Brunei",
+            "Lao People's Democratic Republic"  = "Laos",
+            "Viet Nam"                          = "Vietnam",
+            .default = country
+        )
+    )
+
+print(asean_pv_data)
+
+# Export the data in csv format file
+out_csv <- file.path("data", "asean_PV.csv")
+if (!file.exists(out_csv)) {
+    write_csv(asean_pv_data, out_csv)
     message(out_csv, " successfully created")
 } else {
     message("Skipped writing ", out_csv, "; file already exists.")
