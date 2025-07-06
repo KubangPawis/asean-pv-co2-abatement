@@ -11,4 +11,9 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    readxl (>=1.4.5)
+    dplyr,
+    janitor,
+    magrittr,
+    readr,
+    readxl (>=1.4.5),
+    tidyr
