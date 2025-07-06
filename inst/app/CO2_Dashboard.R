@@ -2,18 +2,29 @@ library(shiny)
 library(shinydashboard)
 library(ggplot2)
 
-# Load data
+# /////////////////////////////////////////////////////////////////////////////////////////////////
+
+# [Data Preparations]
+
 emissions_data_path <- file.path("..", "..", "data-raw", "interim", "asean_co2_emissions.csv")
 emissions_data <- read.csv(emissions_data_path)
 
-# Ensure Year is integer
+# Preprocessing
 emissions_data$Year <- as.integer(emissions_data$Year)
 
-# UI
+# /////////////////////////////////////////////////////////////////////////////////////////////////
+
+# [UI]
+
 ui <- dashboardPage(
     dashboardHeader(title = "ASEAN CO2 Emissions Dashboard"),
 
     dashboardSidebar(
+        sidebarMenu(
+            menuItem("Overview", tabName = "overview", icon = icon("chart-line")),
+            menuItem("Explore", tabName = "explore", icon = icon("industry")),
+            menuItem("Docs", tabName = "docs", icon = icon("industry"))
+        ),
         selectInput("country", "Select Country:",
                     choices = unique(emissions_data$country),
                     selected = "Philippines",
@@ -33,14 +44,21 @@ ui <- dashboardPage(
     ),
 
     dashboardBody(
-        fluidRow(
-            box(title = "CO2 Emissions Over Time", width = 12, status = "primary", solidHeader = TRUE,
-                plotOutput("emissions_plot"))
+        tabItems(
+            tabItem(tabName = "overview",
+                fluidRow(
+                    box(title = "CO2 Emissions Over Time", width = 12, status = "primary", solidHeader = TRUE,
+                        plotOutput("emissions_plot"))
+                )
+            )
         )
     )
 )
 
-# Server
+# /////////////////////////////////////////////////////////////////////////////////////////////////
+
+# [Server]
+
 server <- function(input, output) {
 
     # Reactive filtered data
