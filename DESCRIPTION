@@ -19,5 +19,7 @@ Imports:
     readr,
     readxl (>=1.4.5),
     rmarkdown,
+    shiny,
+    shinydashboard,
     stringr,
     tidyr
