@@ -218,7 +218,7 @@ asean_pv_data <- list.files(
             country = basename(.x) %>%
                 str_remove("^GSA_Report_") %>%
                 str_remove(".xlsx$"),
-            pv_average = get_pv_out_avg(.x)
+            daily_pv_average = get_pv_out_avg(.x)
         ),
         .id = NULL
     ) %>%
@@ -229,7 +229,9 @@ asean_pv_data <- list.files(
             "Lao People's Democratic Republic"  = "Laos",
             "Viet Nam"                          = "Vietnam",
             .default = country
-        )
+        ),
+        yearly_pv = daily_pv_average * 365,
+        solar_capacity_factor = yearly_pv / 8760 # 8760 -> number of hours in a (non‑leap) year
     )
 
 print(asean_pv_data)
