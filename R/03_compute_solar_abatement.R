@@ -2,6 +2,7 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(magrittr)
+library(here)
 
 # [Variables]
 
@@ -14,7 +15,7 @@ scenarios <- crossing(PV_SYSTEM_SIZE = pv_system_sizes,
 
 # [Data Load]
 
-ds_path = file.path("data", "asean_merged.csv")
+ds_path = here(file.path("data", "asean_merged.csv"))
 ds <- read_csv(ds_path, col_names = TRUE)
 
 # [Solar Abatement Computations per ASEAN Country]
@@ -51,5 +52,10 @@ compute_abatement <- function(df, pv_size, target_reduc, target_country, hours_p
 
 # [Data Export]
 
-out_path <- file.path("data", "asean_summary_final.csv")
-write.csv(ds, out_path)
+out_path <- here(file.path("data", "asean_summary_final.csv"))
+if (!file.exists(out_path)) {
+    write.csv(ds, out_path)
+    message(out_path, " successfully created")
+} else {
+    message("Skipped writing ", out_path, "; file already exists.")
+}
