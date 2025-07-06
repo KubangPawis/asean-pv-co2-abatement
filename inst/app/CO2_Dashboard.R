@@ -7,10 +7,20 @@ library(ggplot2)
 # [Data Preparations]
 
 emissions_data_path <- file.path("..", "..", "data-raw", "interim", "asean_co2_emissions.csv")
+asean_merged_data_path <- file.path("..", "..", "data", "asean_merged.csv")
+asean_summary_data_path <- file.path("..", "..", "data", "asean_summary_final.csv")
+
 emissions_data <- read.csv(emissions_data_path)
+asean_merged_data <- read.csv(asean_merged_data_path)
+asean_summary_data <- read.csv(asean_summary_data_path)
 
 # Preprocessing
 emissions_data$Year <- as.integer(emissions_data$Year)
+print(getwd())
+
+# Helper Function Sourcing
+compute_abatement_helper_path <- file.path("..", "..", "R", "03_compute_solar_abatement.R")
+source(compute_abatement_helper_path)
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,11 +55,14 @@ ui <- dashboardPage(
 
     dashboardBody(
         tabItems(
-            tabItem(tabName = "overview",
+            tabItem(tabName = "explore",
                 fluidRow(
                     box(title = "CO2 Emissions Over Time", width = 12, status = "primary", solidHeader = TRUE,
                         plotOutput("emissions_plot"))
                 )
+            ),
+            tabItem(tabName = "overview",
+                    valueBoxOutput("homesRequiredBox")
             )
         )
     )
@@ -78,6 +91,22 @@ server <- function(input, output) {
             labs(title = "CO2 Emissions Over Time",
                  x = "Year", y = "CO2 Emissions (Mt)") +
             theme_minimal()
+    })
+
+    output$homesRequiredBox <- renderValueBox({
+        h <- compute_abatement(
+            df            = asean_merged_data,
+            pv_size       = 5,
+            target_reduc  = 0.05,
+            target_country= "Philippines",
+            round_to = 0
+        )
+        valueBox(
+            format(h, big.mark = ","),
+            subtitle = paste("Homes required in", "Philippines"),
+            icon     = icon("home"),
+            color    = "teal"
+        )
     })
 }
 
