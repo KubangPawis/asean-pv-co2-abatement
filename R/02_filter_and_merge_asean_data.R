@@ -297,7 +297,7 @@ final_merged_data <- merged_dataset %>%
 View(final_merged_data)
 
 #Export the dataset in csv format
-out_csv <- file.path("data", "asean_summary_final.csv")
+out_csv <- file.path("data", "asean_merged.csv")
 if (!file.exists(out_csv)) {
     write_csv(final_merged_data, out_csv)
     message(out_csv, " successfully created")
