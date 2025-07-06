@@ -11,7 +11,7 @@ library(stringr)
 library(janitor)
 
 # Read dataset carbon emission
-dataset1 <- file.path("data-raw", "IEA-EDGAR fossil CO2 emissions.xlsx")
+dataset1 <- file.path("data-raw", "original", "IEA-EDGAR fossil CO2 emissions.xlsx")
 read_dataset <- read_excel(dataset1, sheet = "fossil_CO2_by_sector_country_su")
 
 head(read_dataset) # sample viewing
@@ -51,7 +51,7 @@ long_format_data <- sorted_asean_data %>%
 View(long_format_data)
 
 # Export it to csv format
-out_csv <- file.path("data", "asean_co2_emissions.csv")
+out_csv <- file.path("data-raw", "interim", "asean_co2_emissions.csv")
 if (!file.exists(out_csv)) {
     write_csv(long_format_data, out_csv)
     message(out_csv, " successfully created")
@@ -62,7 +62,7 @@ if (!file.exists(out_csv)) {
 #//////////////////////////////////////////////////////////////////
 
 # Read dataset Grid Emission
-grid_emission_path <- file.path("data-raw", "IGES_GRID_EF_v11.6_20250226.xlsx")
+grid_emission_path <- file.path("data-raw", "original", "IGES_GRID_EF_v11.6_20250226.xlsx")
 target_sheet_name <- "SummaryEFfromCDM"
 
 asean_countries2 <- c(
@@ -94,7 +94,7 @@ View(ds_grid_emission_asean)
 
 # Export it to csv format file
 
-out_csv <- file.path("data", "asean_GridEmission.csv")
+out_csv <- file.path("data-raw", "interim", "asean_GridEmission.csv")
 if (!file.exists(out_csv)) {
     write_csv(ds_grid_emission_asean, out_csv)
     message(out_csv, " successfully created")
@@ -105,7 +105,7 @@ if (!file.exists(out_csv)) {
 #//////////////////////////////////////////////////////////////////
 
 # Read dataset HouseHold Size
-dataset3<- file.path("data-raw", "Household Size and Composition.xlsx")
+dataset3<- file.path("data-raw", "original", "Household Size and Composition.xlsx")
 sheet_name3 <- "HH size and composition 2022"
 
 asean_countries3 <- c(
@@ -135,7 +135,7 @@ asean_household_data <- read_excel(
 View(asean_household_data)
 
 # Export the data in csv format file
-out_csv <- file.path("data", "asean_Household.csv")
+out_csv <- file.path("data-raw", "interim", "asean_Household.csv")
 if (!file.exists(out_csv)) {
     write_csv(asean_household_data, out_csv)
     message(out_csv, " successfully created")
@@ -146,7 +146,7 @@ if (!file.exists(out_csv)) {
 #//////////////////////////////////////////////////////////////////
 
 # Read dataset Global Electricity Demand
-dataset4 <- file.path("data-raw", "Global Electricity Demand and Generation Dataset.csv")
+dataset4 <- file.path("data-raw", "original", "Global Electricity Demand and Generation Dataset.csv")
 
 asean_countries4 <- c(
     "Cambodia",
@@ -168,7 +168,7 @@ asean_electricity_data <- read_csv(dataset4) %>%
 View(asean_electricity_data)
 
 # Export to csv file format
-out_csv <- file.path("data", "asean_Electricity.csv")
+out_csv <- file.path("data-raw", "interim", "asean_Electricity.csv")
 if (!file.exists(out_csv)) {
     write_csv(asean_electricity_data, out_csv)
     message(out_csv, " successfully created")
@@ -178,7 +178,7 @@ if (!file.exists(out_csv)) {
 
 #//////////////////////////////////////////////////////////////////
 
-ds_pv_dir <- file.path("data-raw", "asean_pv_output")
+ds_pv_dir <- file.path("data-raw", "original", "asean_pv_output")
 target_sheet_name <- "PVOUT_stats"
 cell_ref <- "B4"
 
@@ -226,7 +226,7 @@ print(asean_pv_data)
 View(asean_pv_data)
 
 # Export the data in csv format file
-out_csv <- file.path("data", "asean_PV.csv")
+out_csv <- file.path("data-raw", "interim", "asean_PV.csv")
 if (!file.exists(out_csv)) {
     write_csv(asean_pv_data, out_csv)
     message(out_csv, " successfully created")
