@@ -1,12 +1,15 @@
-# use tidyverse for data manipulation
+# use tidyverse (i.e., dplyr, tidyr, readr, magrittr) for data manipulation
 # use readxl for reading excel files
 # use janitor for cleaning missing values
-library("readxl")
-library("tidyverse")
-library("janitor")
+library(readxl)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(magrittr)
+library(janitor)
 
 # Read dataset carbon emission
-dataset1 <- "IEA-EDGAR fossil CO2 emissions.xlsx"
+dataset1 <- file.path("data-raw", "IEA-EDGAR fossil CO2 emissions.xlsx")
 read_dataset <- read_excel(dataset1, sheet = "fossil_CO2_by_sector_country_su")
 
 head(read_dataset) # sample viewing
@@ -46,12 +49,18 @@ long_format_data <- sorted_asean_data %>%
 View(long_format_data)
 
 # Export it to csv format
-write_csv(long_format_data, "asean_co2_emissions.csv")
+out_csv <- file.path("data", "asean_co2_emissions.csv")
+if (!file.exists(out_csv)) {
+    write_csv(long_format_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
 
-
+#//////////////////////////////////////////////////////////////////
 
 # Read dataset Grid Emission
-dataset2 <- "IGES_GRID_EF_v11.6_20250226.xlsx"
+dataset2 <- file.path("data-raw", "IGES_GRID_EF_v11.6_20250226.xlsx")
 sheet_name2 <- "EFfromCountriesOrSB"
 
 asean_countries2 <- c(
@@ -91,13 +100,22 @@ asean_data <- all_data %>%
     # Now the filter works perfectly on the cleaned 'Country' column
     filter(Country %in% asean_countries2)
 
-view(asean_data)
+View(asean_data)
 
 # Export it to csv format file
-write_csv(asean_data, "asean_GridEmission.csv")
+
+out_csv <- file.path("data", "asean_GridEmission.csv")
+if (!file.exists(out_csv)) {
+    write_csv(asean_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
+
+#//////////////////////////////////////////////////////////////////
 
 # Read dataset HouseHold Size
-dataset3<- "Household Size and Composition.xlsx"
+dataset3<- file.path("data-raw", "Household Size and Composition.xlsx")
 sheet_name3 <- "HH size and composition 2022"
 
 asean_countries3 <- c(
@@ -124,13 +142,21 @@ asean_household_data <- read_excel(
     clean_names() %>%
     filter(country_or_area %in% asean_countries3)
 
-view(asean_household_data)
+View(asean_household_data)
 
 # Export the data in csv format file
-write_csv(asean_household_data, "asean_Household.csv")
+out_csv <- file.path("data", "asean_Household.csv")
+if (!file.exists(out_csv)) {
+    write_csv(asean_household_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
+
+#//////////////////////////////////////////////////////////////////
 
 # Read dataset Global Electricity Demand
-dataset4<- "Global Electricity Demand and Generation Dataset.csv"
+dataset4 <- file.path("data-raw", "Global Electricity Demand and Generation Dataset.csv")
 
 asean_countries4 <- c(
     "Cambodia",
@@ -149,7 +175,13 @@ asean_electricity_data <- read_csv(dataset4) %>%
     filter(entity %in% asean_countries4) %>%
     arrange(entity, year)
 
-view(asean_electricity_data)
+View(asean_electricity_data)
 
 # Export to csv file format
-write_csv(asean_electricity_data, "asean_Electricity.csv")
+out_csv <- file.path("data", "asean_Electricity.csv")
+if (!file.exists(out_csv)) {
+    write_csv(asean_electricity_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
