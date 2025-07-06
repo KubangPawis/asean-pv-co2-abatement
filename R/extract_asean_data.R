@@ -19,16 +19,16 @@ head(read_dataset) # sample viewing
 
 # Create a vector of ASEAN country names
 asean_countries <- c(
-    "Brunei Darussalam",
+    "Brunei",
     "Cambodia",
     "Indonesia",
     "Laos",
     "Malaysia",
-    "Myanmar",
+    "Myanmar/Burma",
     "Philippines",
     "Singapore",
     "Thailand",
-    "Vietnam"
+    "Viet Nam"
 )
 
 # filtering the data to display ASEAN Countries only
@@ -240,24 +240,23 @@ if (!file.exists(out_csv)) {
 
 # Ensure no duplicates in columns
 co2_emissions_clean <- long_format_data %>%
-    # Standardize country names
     mutate(
         Country = recode(
             Country,
-            "Brunei Darussalam" = "Brunei",
-            "Laos" = "Laos", # Already standard
-            "Vietnam" = "Vietnam", # Already standard
+            "Myanmar/Burma" = "Myanmar",
+            "Viet Nam" = "Vietnam",
             .default = Country
         ),
         # Convert Year to a numeric type for joining
         Year = as.numeric(Year)
     ) %>%
-    # Rename columns to standard names
-    rename(
+    filter(
+        Year == max(Year, na.rm = TRUE) &
+        Sector == "Power Industry"
+    ) %>%
+    select(
         country = Country,
-        year = Year,
-        edgar_country_code = `EDGAR Country Code`,
-        co2_emissions_tonnes = CO2_Emissions # More descriptive name
+        co2_emissions_tonnes = CO2_Emissions
     )
 
 grid_emission_clean <- ds_grid_emission_asean %>%
@@ -271,51 +270,30 @@ grid_emission_clean <- ds_grid_emission_asean %>%
         )
     )
 
-electricity_data_clean <- asean_electricity_data %>%
-    mutate(
-        entity = recode(
-            entity,
-            "Laos" = "Laos", # Already standard
-            "VietNam" = "Vietnam",
-            .default = entity
-        )
-    ) %>%
-    rename(country = entity)
-
-pv_data_clean <- asean_pv_data %>%
-    rename(country = country)
-
-
 ## Joining the dataset now
 merged_dataset <- full_join(
     co2_emissions_clean,
-    electricity_data_clean,
-    by = c("country", "year")
-)
-
-merged_dataset <- full_join(
-    merged_dataset,
     grid_emission_clean,
     by = "country"
 )
 
 merged_dataset <- full_join(
     merged_dataset,
-    pv_data_clean,
+    asean_pv_data,
     by = "country"
 )
 
 ## Finalized the dataset
 final_merged_data <- merged_dataset %>%
-    arrange(country, year)
+    arrange(country)
 
 # View the merge data
 View(final_merged_data)
 
 #Export the dataset in csv format
-out_csv <- file.path("data", "merged_dataset.csv")
+out_csv <- file.path("data", "asean_summary_final.csv")
 if (!file.exists(out_csv)) {
-    write_csv(final_merged_data, out_csv) # Write NA as empty strings
+    write_csv(final_merged_data, out_csv)
     message(out_csv, " successfully created")
 } else {
     message("Skipped writing ", out_csv, "; file already exists.")
