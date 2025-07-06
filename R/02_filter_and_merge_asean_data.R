@@ -44,7 +44,13 @@ long_format_data <- sorted_asean_data %>%
     pivot_longer(
         cols = -c(Substance, Sector, `EDGAR Country Code`, Country),
         names_to = "Year",
-        values_to = "CO2_Emissions"
+        values_to = "co2_mt"
+    ) %>%
+    rename(
+        country = Country
+    ) %>%
+    mutate(
+        co2_emissions_g = co2_mt * 1e12
     )
 
 # View the spreadsheet extract
@@ -241,11 +247,11 @@ if (!file.exists(out_csv)) {
 # Ensure no duplicates in columns
 co2_emissions_clean <- long_format_data %>%
     mutate(
-        Country = recode(
-            Country,
+        country = recode(
+            country,
             "Myanmar/Burma" = "Myanmar",
             "Viet Nam" = "Vietnam",
-            .default = Country
+            .default = country
         ),
         # Convert Year to a numeric type for joining
         Year = as.numeric(Year)
@@ -255,8 +261,8 @@ co2_emissions_clean <- long_format_data %>%
         Sector == "Power Industry"
     ) %>%
     select(
-        country = Country,
-        co2_emissions_tonnes = CO2_Emissions
+        country,
+        co2_emissions_g
     )
 
 grid_emission_clean <- ds_grid_emission_asean %>%
