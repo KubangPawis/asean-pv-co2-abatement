@@ -58,7 +58,8 @@ ui <- dashboardPage(
                             column(4, selectInput("ov_co2_target","CO₂ reduction target (%)", choices=c(1, 5, 10))),
                         )
                     ),
-                    valueBoxOutput("homesRequiredBox")
+                    valueBoxOutput("homesRequiredBox"),
+                    valueBoxOutput("co2Box")
             ),
             tabItem(tabName = "explore",
                     fluidRow(
@@ -175,6 +176,29 @@ server <- function(input, output) {
             color    = "teal"
         )
     })
+
+    output$co2Box <- renderValueBox({
+        homes_required <- compute_abatement(
+            df             = asean_merged_data,
+            pv_size        = as.numeric(input$ov_pv_size),
+            target_reduc   = as.numeric(input$ov_co2_target) / 100,
+            target_country = input$ov_country,
+            round_to       = 0
+        )
+        mt_abated_idx <- which(
+            asean_summary_data$PV_SYSTEM_SIZE == as.numeric(input$ov_pv_size) &
+            asean_summary_data$TARGET_REDUCTION == as.numeric(input$ov_co2_target) / 100 &
+            asean_summary_data$country == input$ov_country
+            )
+        mt_abated <- (homes_required * asean_summary_data$co2_avoided_per_home[[ mt_abated_idx[1] ]]) / 1e12
+        valueBox(
+            paste0(format(round(mt_abated, 2), big.mark=","), " Mt"),
+            subtitle = "Annual CO₂ abated",
+            icon     = icon("cloud"),
+            color    = "green"
+        )
+    })
+
 }
 
 # Run the app
