@@ -11,10 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 # Load necessary libraries
-library(tidyverse)
-library(ggplot2)
-library(scales)
-library(ggrepel)
+library(tidyverse) # Use for data science 
+library(scales) # Use for improving formats/axis
+library(ggrepel) # Use for fixing overlapping
 
 ### **Introduction**
 This report investigates the potential for residential rooftop solar panels to reduce CO₂ emissions from the electricity sector across the Association of Southeast Asian Nations (ASEAN). By integrating datasets on carbon emissions, grid intensity, and solar energy potential, we quantify the abatement capacity of a standard 5 kW solar PV system and estimate the scale of adoption required to achieve a meaningful 5% reduction in power-sector emissions.
