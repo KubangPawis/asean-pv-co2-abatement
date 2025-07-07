@@ -20,6 +20,7 @@ asean_merged_data <- read.csv(asean_merged_data_path)
 asean_summary_data <- read.csv(asean_summary_data_path)
 asean_grid_emission_data <- read.csv(asean_grid_emission_data_path)
 
+{ emissions_data$country[emissions_data$country == "Viet Nam"] <- "Vietnam"; asean_grid_emission_data$country[asean_grid_emission_data$country == "Viet Nam"] <- "Vietnam" }
 emissions_data$Year <- as.integer(emissions_data$Year)
 print(getwd())
 
