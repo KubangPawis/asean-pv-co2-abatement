@@ -1,0 +1,85 @@
+---
+title: "results_analysis_01"
+output: html_document
+toc: true
+toc_depth: 2
+theme: flatly
+params:
+data_path: "data/analysis_results.csv"
+---
+
+# Introduction
+
+# Setup and Data Import
+```{r}
+
+# Imports
+library(readr)
+library(tidyr)
+library(ggplot2)
+library(ggrepel)
+library(ggpubr)
+library(knitr)
+library(here)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  cache = TRUE
+)
+
+country_list  = c("Indonesia", "Myanmar", "Thailand", "Vietnam", "Malaysia",
+               "Philippines", "Laos", "Cambodia", "Singapore")
+
+# Data Load
+asean_summary_path <- here(file.path("data", "asean_summary_final.csv"))
+asean_summary_data <- read.csv(asean_summary_path)
+
+# Exlude Brunei analysis for now (no data for Grid EF)
+asean_summary_data <- asean_summary_data %>%
+    filter(`country` %in% country_list)
+
+```
+
+# Data Analysis
+```{r myplot, fig.width=6, fig.height=5, out.width='70%', dpi=100}
+
+ggplot(asean_summary_data,
+       aes(x = TARGET_REDUCTION * 100,
+           y = homes_required / 1e6,
+           color = factor(PV_SYSTEM_SIZE)))
+  geom_line(size = 1) +
+  facet_wrap(~ country, scales = "free_y") +
+  scale_x_continuous(breaks = c(1,5,10)) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    x      = "CO2 reduction target (%)",
+    y      = "Homes required (million)",
+    color  = "PV size (kW)",
+    title  = "Sensitivity of Homes Needed to PV Size and CO2 Target"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+  
+```
+
+```{r myplot, fig.width=6, fig.height=5, out.width='70%', dpi=100}
+
+# Assumption: PV_SYSTEM_SIZE = 5; TARGET_REDUCTION = 0.05
+
+ranks <- asean_summary_data %>%
+    filter(PV_SYSTEM_SIZE == 5, TARGET_REDUCTION == 0.05) %>%
+    select(country, homes_required, land_area_2022) %>%
+    mutate(
+      rank_homes_required = dense_rank(desc(homes_required)),
+      rank_land_area_km2 = dense_rank(desc(land_area_2022))
+      ) %>%
+    arrange(rank_homes_required) %>%
+    rename(land_area_km2 = land_area_2022)
+
+print(ranks)
+```
+
