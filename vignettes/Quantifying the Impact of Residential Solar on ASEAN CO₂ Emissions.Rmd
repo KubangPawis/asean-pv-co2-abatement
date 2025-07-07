@@ -117,42 +117,29 @@ ggplot(pv_factor_data, aes(x = solar_capacity_factor, y = country)) +
         axis.title.y = element_blank())
 ```
 ### **4. Analysis of Household Data**
-While this dataset is not used in the final calculation of `homes_required`, it is essential for contextualizing the results and assessing the real-world feasibility of a large-scale residential solar program. For instance, the final analysis in the next section concludes that the Philippines would need to equip 1.16 million homes with solar panels. The household data, which provides country-specific information on the total number of households, allows policymakers to understand this figure not just as an absolute number, but as a percentage of the national total. This context is crucial for designing targeted policies, subsidy programs, and public awareness campaigns, and for gauging the true scale of the undertaking required in each country.
+While the number of required solar installations is a key output of this analysis, its practical meaning becomes clear only when contextualized with demographic data. The asean_Household.csv dataset, which contains the total number of households per country, serves this critical purpose.
+
+For instance, this study finds that the Philippines requires approximately 1.16 million homes to be equipped with 5 kW solar systems to meet a 5% emissions reduction target. By using the household data, a policymaker can immediately translate this absolute figure into a market penetration rate (e.g., as a percentage of total households). This context is indispensable for assessing the feasibility of such a program, designing targeted subsidy schemes, and understanding the true scale of the national effort required to achieve these climate goals. It transforms a raw number into an actionable policy metric.
 
 ### **5. Analysis of Solar Abatement Potential**
 
-This final stage of analysis combines the previous datasets to quantify the potential of residential solar.
+This final stage of analysis combines the previous datasets, which synthesizes emissions, grid, and solar data across multiple scenarios. For this report, we will focus on a central scenario: achieving a 5% reduction in 2023 power-sector emissions using 5 kW residential solar systems.
+
 ```{r calculate-abatement-potential}
 # Create a single, comprehensive data frame by joining the sources and then calculating the required metrics.
 
-asean_analysis_data <- power_emissions_2023 %>%
-  # Join with grid emission data
-  left_join(grid_emission, by = "country") %>%
-  # Join with solar potential data
-  left_join(pv_potential, by = "country") %>%
-  # Select only the columns needed for the analysis
-  select(country, co2_emissions_g, ef_gco2_per_kwh, solar_capacity_factor) %>%
-  # Calculate the abatement metrics described in the report
-  mutate(
-    # Annual kWh from a 5 kW system: 5kW * 8760 hours/year * capacity factor
-    annual_kwh_per_home = 5 * 8760 * solar_capacity_factor,
-    # CO2 avoided per home (grams) = Annual kWh * Grid Emission Factor
-    co2_avoided_per_home = annual_kwh_per_home * ef_gco2_per_kwh,
-    # The 5% reduction target in grams
-    reduction_target_g = co2_emissions_g * 0.05,
-    # Number of homes required = Target / Savings per home
-    homes_required = reduction_target_g / co2_avoided_per_home
-  )
+analysis_scenario <- summary_final %>%
+  filter(PV_SYSTEM_SIZE == 5, TARGET_REDUCTION == 0.05) %>%
+  # Ensure data is clean for plotting
+  filter(!is.na(co2_avoided_per_home) & !is.na(homes_required))
 ```
 
 #### **Finding 1: A Single Home Solar System Has the Greatest CO₂ Impact in Indonesia and Malaysia**
 
-The analysis calculates the CO₂ avoided annually by a standard 5 kW residential solar system. Due to its high grid intensity, a single solar installation in **Indonesia** can prevent approximately **5.2 metric tons of CO₂ per year**. **Malaysia** follows, with each system avoiding **4.5 metric tons** annually. In contrast, the same system in **Myanmar**, with its cleaner grid, avoids a smaller but still substantial **2.9 tons**. This highlights that solar investments yield the highest carbon returns in countries with the "dirtiest" grids.
+The analysis calculates the CO₂ avoided annually by a standard 5 kW residential solar system. Due to its high grid intensity, a single solar installation in Indonesia can prevent approximately 5.2 metric tons of CO₂ per year. Malaysia follows, with each system avoiding 4.5 metric tons annually. In contrast, the same system in Myanmar, with its cleaner grid, avoids a smaller but still substantial 2.9 tons. This highlights that solar investments yield the highest carbon returns in countries with the "dirtiest" grids.
 
 ```{r plot-co2-avoided}
-# Prepare data for plotting
-co2_avoided_data <- asean_analysis_data %>%
-  filter(!is.na(co2_avoided_per_home)) %>%
+co2_avoided_data <- analysis_scenario %>%
   mutate(
     co2_avoided_tons = co2_avoided_per_home / 1e6, # Convert grams to metric tons
     country = fct_reorder(country, co2_avoided_tons)
@@ -189,8 +176,7 @@ For smaller emitters like Cambodia, the absolute number is lower at approximatel
 
 ```{r plot-homes-required}
 # Prepare data for plotting
-homes_required_data <- asean_analysis_data %>%
-  filter(!is.na(homes_required)) %>%
+homes_required_data <- analysis_scenario %>%
   mutate(country = fct_reorder(country, homes_required))
 
 # Create the plot
@@ -215,6 +201,22 @@ ggplot(homes_required_data, aes(x = homes_required, y = country, fill = homes_re
 
 Based on this quantitative analysis, the following policy recommendations are proposed:
 
-1.  **Prioritize High-Intensity Grids:** International climate finance and regional ASEAN initiatives should be strategically directed towards Indonesia, Vietnam, and Malaysia, where the carbon abatement per dollar invested in solar will be highest.
-2.  **Leverage Regional Similarities:** Given the uniform solar potential, ASEAN nations can collaborate on bulk purchasing of solar technology, developing common technical standards, and sharing best practices on grid management to drive down costs and accelerate adoption for everyone.
-3.  **Integrate Socio-Demographic Data:** To move from theoretical potential to practical implementation, policymakers must use household data to contextualize the `homes_required` targets, enabling the design of realistic, equitable, and effective national solar programs.
+1. **Adopt a Two-Pronged Prioritization Strategy:**
+
+- The data clearly shows that not all countries offer the same return on investment. Policy and climate finance should be prioritized based on two distinct metrics:
+For Maximum Impact: To achieve the greatest CO₂ reduction per solar panel installed, efforts should be concentrated in countries with the most carbon-intensive grids. As shown in our "Annual CO₂ Abatement" chart, a single 5 kW system in Indonesia (5.2 tons/year) and Malaysia (4.5 tons/year) has a disproportionately high impact.
+
+- To Tackle the Largest Emitters: To address the sheer volume of emissions, large-scale national programs are critically needed in the region's biggest polluters. The "Homes Required" analysis 
+identifies Indonesia (2.6M homes), Vietnam (2.05M homes), Malaysia (1.3M homes), and the Philippines (1.16M homes) as the nations requiring the most significant mobilization.
+
+2. **Capitalize on Uniform Solar Potential for Regional Collaboration:**
+
+= The "Solar PV Capacity Factor" chart demonstrates that the entire ASEAN region is a prime location for solar energy, with consistently high capacity factors ranging from 14% to 17%. This uniformity is a strategic asset. ASEAN nations should leverage this shared advantage to:
+Establish a regional purchasing bloc to lower the cost of solar panels and inverters through bulk procurement.
+
+- Develop common technical standards for residential solar installations to ensure quality, safety, and grid compatibility.
+Create a platform for sharing best practices on grid integration, policy design, and installer training, accelerating the learning curve for all member states.
+
+3.  **Integrate Socio-Demographic Data:** 
+
+- To move from theoretical potential to practical implementation, policymakers must use household data to contextualize the `homes_required` targets, enabling the design of realistic, equitable, and effective national solar programs.
