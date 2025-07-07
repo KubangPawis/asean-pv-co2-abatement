@@ -59,7 +59,8 @@ ui <- dashboardPage(
                         )
                     ),
                     valueBoxOutput("homesRequiredBox"),
-                    valueBoxOutput("co2Box")
+                    valueBoxOutput("co2Box"),
+                    valueBoxOutput("capacityBox"),
             ),
             tabItem(tabName = "explore",
                     fluidRow(
@@ -196,6 +197,23 @@ server <- function(input, output) {
             subtitle = "Annual CO₂ abated",
             icon     = icon("cloud"),
             color    = "green"
+        )
+    })
+
+    output$capacityBox <- renderValueBox({
+        homes_required <- compute_abatement(
+            df             = asean_merged_data,
+            pv_size        = as.numeric(input$ov_pv_size),
+            target_reduc   = as.numeric(input$ov_co2_target) / 100,
+            target_country = input$ov_country,
+            round_to       = 0
+        )
+        GW_needed <- (homes_required * as.numeric(input$ov_pv_size)) / 1000
+        valueBox(
+            paste0(format(round(GW_needed, 2), big.mark=","), " GW"),
+            subtitle = "Installed capacity needed",
+            icon     = icon("solar-panel"),
+            color    = "yellow"
         )
     })
 
