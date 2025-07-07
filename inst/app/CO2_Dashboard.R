@@ -75,7 +75,7 @@ ui <- dashboardPage(
             tabItem(tabName = "explore",
                     fluidRow(
                         box(
-                            title = "CO2 Emissions Over Time", width = 12, status = "primary", solidHeader = TRUE,
+                            title = "CO2 Emissions Over Time", width = 12, status = "success", solidHeader = TRUE,
                             fluidRow(
                                 column(4,
                                        selectInput("country", "Select Country:",
@@ -103,7 +103,7 @@ ui <- dashboardPage(
                     ),
                     fluidRow(
                         box(
-                            title = "Total CO2 Emissions by Sector", width = 12, status = "info", solidHeader = TRUE,
+                            title = "Total CO2 Emissions by Sector", width = 12, status = "success", solidHeader = TRUE,
                             fluidRow(
                                 column(6,
                                        selectInput("bar_country", "Select Country for Bar Chart:",
