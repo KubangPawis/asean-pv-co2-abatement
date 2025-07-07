@@ -25,11 +25,6 @@ grid_emission <- read_csv("../data-raw/interim/asean_GridEmission.csv")
 pv_potential <- read_csv("../data-raw/interim/asean_PV.csv")
 summary_final <- read_csv("../data/asean_summary_final.csv")
 
-### **1. Analysis of Carbon Emissions (Power Industry)**
-The analysis of the emissions data confirms that the **"Power Industry"** is the primary driver of CO₂ emissions in most ASEAN nations, making it the critical target for decarbonization efforts. The data from 2023 reveals a significant disparity in CO₂ emissions from the power sector across the region. **Indonesia** is the region's largest emitter by a substantial margin, accounting for approximately **270 million metric tons of CO₂**. It is followed by other major contributors including **Vietnam (155M tons)**, **Malaysia (117M tons)**, **Thailand (80M tons)**, and the **Philippines (83M tons)**. These five nations are responsible for the vast majority of the region's power-sector emissions.
-
-Connecting this to grid intensity, the data shows a clear correlation: countries with high overall emissions also have highly carbon-intensive grids. Indonesia, the top emitter, also has the highest emission factor, reinforcing the fact that its reliance on fossil fuels for power generation is the core issue.
-
 ```
 
 
@@ -59,12 +54,19 @@ ggplot(power_emissions_2023, aes(x = co2_emissions_mt, y = country, fill = co2_e
         panel.grid.minor.x = element_blank(),
         axis.title.y = element_blank())
 ```
-### **2. Analysis of Grid Emission Intensity**
-The grid emission factor (EF) is a critical metric that determines the effectiveness of solar energy in displacing carbon. The analysis reveals:
+```{r Analysis on -co2-emissions}
+### **1. Analysis of Carbon Emission Intensity**
 
-*   **High-Intensity Grids:** Indonesia's grid is the most carbon-intensive at **778 gCO₂/kWh**, followed by Malaysia (670 gCO₂/kWh). This is indicative of a heavy reliance on fossil fuels, particularly coal, for electricity generation. Every kWh of solar energy produced in these countries has a disproportionately high impact on reducing emissions.
-*   **Low-Intensity Grids:** Conversely, Myanmar (395 gCO₂/kWh) has the least carbon-intensive grid among the countries with available data, likely due to a different energy mix that may include more hydropower.
-*   **Data Gaps:** It is important to note that grid emission data was not available for Brunei, preventing a direct calculation of its solar abatement potential in this study.
+The analysis of the emissions data confirms that the **"Power Industry"** is the primary driver of CO₂ emissions in most ASEAN nations, making it the critical target for decarbonization efforts. The data from 2023 reveals a significant disparity in CO₂ emissions from the power sector across the region. **Indonesia** is the region's largest emitter by a substantial margin, accounting for approximately **270 million metric tons of CO₂**. It is followed by other major contributors including **Vietnam (155M tons)**, **Malaysia (117M tons)**, **Thailand (80M tons)**, and the **Philippines (83M tons)**. These five nations are responsible for the vast majority of the region's power-sector emissions.
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+### After Analyzing the Grid Emission Plot
+Connecting this to grid intensity, the data shows a clear correlation: countries with high overall emissions also have highly carbon-intensive grids. Indonesia, the top emitter, also has the highest emission factor, reinforcing the fact that its reliance on fossil fuels for power generation is the core issue.
+
+```
+
+### **2. Analysis of Grid Emission Intensity**
 
 ```{r plot-grid-emission}
 # Prepare data for plotting
@@ -89,11 +91,17 @@ ggplot(grid_intensity_data, aes(x = ef_gco2_per_kwh, y = country, fill = ef_gco2
         panel.grid.minor.x = element_blank(),
         axis.title.y = element_blank())
 ```
+```{r analysis on-grid-emission}
+
+The grid emission factor (EF) is a critical metric that determines the effectiveness of solar energy in displacing carbon. The analysis reveals:
+
+*   **High-Intensity Grids:** Indonesia's grid is the most carbon-intensive at **778 gCO₂/kWh**, followed by Malaysia (670 gCO₂/kWh). This is indicative of a heavy reliance on fossil fuels, particularly coal, for electricity generation. Every kWh of solar energy produced in these countries has a disproportionately high impact on reducing emissions.
+*   **Low-Intensity Grids:** Conversely, Myanmar (395 gCO₂/kWh) has the least carbon-intensive grid among the countries with available data, likely due to a different energy mix that may include more hydropower.
+*   **Data Gaps:** It is important to note that grid emission data was not available for Brunei, preventing a direct calculation of its solar abatement potential in this study.
+```
+
+
 ### **3. Analysis of Solar Energy Potential**
-The analysis of solar capacity factors—the ratio of actual energy output over a year to the theoretical maximum—reveals that ASEAN is a prime region for solar energy.
-
-*   **Uniformly High Potential:** The solar capacity factors are remarkably consistent across the region, ranging from a high of **~17% in Cambodia and Thailand** to a low of **~14.3% in Vietnam**. This uniformity simplifies regional analysis and strongly suggests that solar PV technology is a viable and predictable energy source for all ASEAN nations. The `solar_capacity_factor` is a key input for the R script, which uses it to calculate the annual electricity generation of a standard 5 kW residential system.
-
 ```{r plot-pv-factor}
 # Prepare data for plotting
 pv_factor_data <- summary_final %>%
@@ -115,6 +123,16 @@ ggplot(pv_factor_data, aes(x = solar_capacity_factor, y = country)) +
         panel.grid.minor.x = element_blank(),
         axis.title.y = element_blank())
 ```
+```{r analysis on-sfc}
+The analysis of solar capacity factors—the ratio of actual energy output over a year to the theoretical maximum—reveals that ASEAN is a prime region for solar energy.
+
+**Uniformly High Potential:** The solar capacity factors are remarkably consistent across the region, ranging from a high of **~17% in Cambodia and Thailand** to a low of **~14.3% in Vietnam**. 
+This uniformity simplifies regional analysis and strongly suggests that solar PV technology is a viable and predictable energy source for all ASEAN nations. The `solar_capacity_factor` is a key input for the R script, which uses it to calculate the annual electricity generation of a standard 5 kW residential system.
+
+
+```
+
+
 ### **4. Analysis of Household Data**
 While the number of required solar installations is a key output of this analysis, its practical meaning becomes clear only when contextualized with demographic data. The asean_Household.csv dataset, which contains the total number of households per country, serves this critical purpose.
 
@@ -135,7 +153,7 @@ analysis_scenario <- summary_final %>%
 
 #### **Finding 1: A Single Home Solar System Has the Greatest CO₂ Impact in Indonesia and Malaysia**
 
-The analysis calculates the CO₂ avoided annually by a standard 5 kW residential solar system. Due to its high grid intensity, a single solar installation in Indonesia can prevent approximately 5.2 metric tons of CO₂ per year. Malaysia follows, with each system avoiding 4.5 metric tons annually. In contrast, the same system in Myanmar, with its cleaner grid, avoids a smaller but still substantial 2.9 tons. This highlights that solar investments yield the highest carbon returns in countries with the "dirtiest" grids.
+It calculates the CO₂ avoided annually by a standard 5 kW residential solar system. Due to its high grid intensity, a single solar installation in Indonesia can prevent approximately 5.2 metric tons of CO₂ per year. Malaysia follows, with each system avoiding 4.5 metric tons annually. In contrast, the same system in Myanmar, with its cleaner grid, avoids a smaller but still substantial 2.9 tons. This highlights that solar investments yield the highest carbon returns in countries with the "dirtiest" grids.
 
 ```{r plot-co2-avoided}
 co2_avoided_data <- analysis_scenario %>%
@@ -163,16 +181,6 @@ ggplot(co2_avoided_data, aes(x = co2_avoided_tons, y = country, fill = co2_avoid
 ```
 #### **Finding 2: Achieving a Modest 5% Emissions Reduction Requires a Massive, Coordinated Effort**
 
-This is the headline finding of the study. To reduce the 2023 power-sector emissions by just 5%, the number of homes that would need to adopt a 5 kW solar system is immense:
-
-*   **Indonesia:** 2.6 million homes
-*   **Vietnam:** 2.05 million homes
-*   **Malaysia:** 1.3 million homes
-*   **Philippines:** 1.16 million homes
-
-For smaller emitters like Cambodia, the absolute number is lower at approximately 52,000 homes, but this still represents a major national project requiring significant investment and policy support. These figures underscore the massive scale of the challenge and the need for immediate, large-scale action.
-
-
 ```{r plot-homes-required}
 # Prepare data for plotting
 homes_required_data <- analysis_scenario %>%
@@ -196,6 +204,18 @@ ggplot(homes_required_data, aes(x = homes_required, y = country, fill = homes_re
         axis.title.y = element_blank())
 ```
 
+```{r findings B}
+This is the headline finding of the study. To reduce the 2023 power-sector emissions by just 5%, the number of homes that would need to adopt a 5 kW solar system is immense:
+
+*   **Indonesia:** 2.6 million homes
+*   **Vietnam:** 2.05 million homes
+*   **Malaysia:** 1.3 million homes
+*   **Philippines:** 1.16 million homes
+
+For smaller emitters like Cambodia, the absolute number is lower at approximately 52,000 homes, but this still represents a major national project requiring significant investment and policy support. These figures underscore the massive scale of the challenge and the need for immediate, large-scale action.
+
+```
+
 ### **Conclusion and Policy Recommendations**
 
 Based on this quantitative analysis, the following policy recommendations are proposed:
@@ -215,7 +235,3 @@ Establish a regional purchasing bloc to lower the cost of solar panels and inver
 
 - Develop common technical standards for residential solar installations to ensure quality, safety, and grid compatibility.
 Create a platform for sharing best practices on grid integration, policy design, and installer training, accelerating the learning curve for all member states.
-
-3.  **Integrate Socio-Demographic Data:** 
-
-- To move from theoretical potential to practical implementation, policymakers must use household data to contextualize the `homes_required` targets, enabling the design of realistic, equitable, and effective national solar programs.
