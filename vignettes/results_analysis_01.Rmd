@@ -178,7 +178,7 @@ ggplot(co2_avoided_data, aes(x = co2_avoided_tons, y = country, fill = co2_avoid
 #### **Finding 2: Achieving a Modest 5% Emissions Reduction Requires a Massive, Coordinated Effort**
 
 ```{r plot-homes-required}
-# Prepare data for plotting
+
 homes_required_data <- analysis_scenario %>%
   mutate(country = fct_reorder(country, homes_required))
 
