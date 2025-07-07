@@ -204,10 +204,11 @@ server <- function(input, output) {
         filtered_data$grid_emission <- matching_grid$ef_gco2_per_kwh
 
         ggplot(filtered_data, aes(x = grid_emission, y = homes_required, label = country)) +
-            geom_point(size = 3, color = "#4472C4") +
+            geom_point(aes(color = country), size = 5) +
             geom_text(vjust = -0.8, size = 4, color = "black") +
             labs(x = "Grid Emission Factor (gCO2/kWh)", y = "Homes Required", title = "Homes Required vs Grid Emissions", subtitle = paste("PV", input$scatter_pv_size, "kW •", input$scatter_target, "% CO2 reduction")) +
-            theme_minimal(base_size = 14)
+            theme_minimal(base_size = 14) +
+            theme(legend.position = "none")
     })
 
     output$hover_info <- renderPrint({
