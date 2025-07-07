@@ -248,6 +248,7 @@ land_area_data_path <- file.path("data-raw", "original", "API_AG.LND.TOTL.K2_DS2
 
 asean_countries5 <- c(
     "Cambodia",
+    "Brunei Darussalam",
     "Indonesia",
     "Lao PDR",
     "Malaysia",
@@ -264,7 +265,8 @@ land_area_data <- read_csv(land_area_data_path, col_names=TRUE, skip=4) %>%
         `Country Name` = recode(
             `Country Name`,
             "Lao PDR" = "Laos",
-            "Viet Nam" = "Vietnam"
+            "Viet Nam" = "Vietnam",
+            "Brunei Darussalam" = "Brunei"
         )
     ) %>%
     select(
