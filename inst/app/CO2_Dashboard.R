@@ -5,6 +5,19 @@ library(ggplot2)
 # /////////////////////////////////////////////////////////////////////////////////////////////////
 # [Data Preparations]
 
+country_list <- c(
+    "Brunei",
+    "Cambodia",
+    "Indonesia",
+    "Laos",
+    "Malaysia",
+    "Myanmar",
+    "Philippines",
+    "Singapore",
+    "Thailand",
+    "Vietnam"
+)
+
 emissions_data_path <- file.path("..", "..", "data-raw", "interim", "asean_co2_emissions.csv")
 asean_merged_data_path <- file.path("..", "..", "data", "asean_merged.csv")
 asean_summary_data_path <- file.path("..", "..", "data", "asean_summary_final.csv")
@@ -36,6 +49,17 @@ ui <- dashboardPage(
 
     dashboardBody(
         tabItems(
+            tabItem(tabName = "overview",
+                    fluidRow(
+                        box(
+                            title = "Scenario Controls", width = 12, status = "primary", solidHeader = TRUE,
+                            column(4, selectInput("ov_country",  "Country", choices = country_list, selected="Philippines")),
+                            column(4, selectInput("ov_pv_size",  "PV system size (kW)",  choices=c(3, 5, 10))),
+                            column(4, selectInput("ov_co2_target","CO₂ reduction target (%)", choices=c(1, 5, 10))),
+                        )
+                    ),
+                    valueBoxOutput("homesRequiredBox")
+            ),
             tabItem(tabName = "explore",
                     fluidRow(
                         box(
@@ -87,10 +111,6 @@ ui <- dashboardPage(
                             plotOutput("sector_bar_plot")
                         )
                     )
-            ),
-
-            tabItem(tabName = "overview",
-                    valueBoxOutput("homesRequiredBox")
             )
         )
     )
@@ -143,14 +163,14 @@ server <- function(input, output) {
     output$homesRequiredBox <- renderValueBox({
         h <- compute_abatement(
             df             = asean_merged_data,
-            pv_size        = 5,
-            target_reduc   = 0.05,
-            target_country = "Philippines",
+            pv_size        = as.numeric(input$ov_pv_size),
+            target_reduc   = as.numeric(input$ov_co2_target) / 100,
+            target_country = input$ov_country,
             round_to       = 0
         )
         valueBox(
             format(h, big.mark = ","),
-            subtitle = paste("Homes required in", "Philippines"),
+            subtitle = paste("Homes required in", input$ov_country),
             icon     = icon("home"),
             color    = "teal"
         )
