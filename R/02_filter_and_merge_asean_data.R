@@ -242,6 +242,48 @@ if (!file.exists(out_csv)) {
 
 #//////////////////////////////////////////////////////////////////
 
+# Cleaning and preprocessing "land area" data
+
+land_area_data_path <- file.path("data-raw", "original", "API_AG.LND.TOTL.K2_DS2_en_csv_v2_21556.csv")
+
+asean_countries5 <- c(
+    "Cambodia",
+    "Indonesia",
+    "Lao PDR",
+    "Malaysia",
+    "Myanmar",
+    "Philippines",
+    "Singapore",
+    "Thailand",
+    "Viet Nam"
+)
+
+land_area_data <- read_csv(land_area_data_path, col_names=TRUE, skip=4) %>%
+    filter(`Country Name` %in% asean_countries5) %>%
+    mutate(
+        `Country Name` = recode(
+            `Country Name`,
+            "Lao PDR" = "Laos",
+            "Viet Nam" = "Vietnam"
+        )
+    ) %>%
+    select(
+        country = `Country Name`,
+        land_area_2022 = `2022`
+    )
+View(land_area_data)
+
+# Export the data in csv format file
+out_csv <- file.path("data-raw", "interim", "asean_land_area.csv")
+if (!file.exists(out_csv)) {
+    write_csv(land_area_data, out_csv)
+    message(out_csv, " successfully created")
+} else {
+    message("Skipped writing ", out_csv, "; file already exists.")
+}
+
+#//////////////////////////////////////////////////////////////////
+
 # Merge all dataset into one
 
 # Ensure no duplicates in columns
