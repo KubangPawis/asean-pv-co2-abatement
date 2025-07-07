@@ -44,9 +44,8 @@ ggplot(power_emissions_2023, aes(x = co2_emissions_mt, y = country, fill = co2_e
   scale_fill_gradient(low = "lightblue", high = "darkred") +
   scale_x_continuous(labels = scales::comma_format(suffix = " M tons"), expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "Power Industry CO₂ Emissions in ASEAN (2023)",
-    subtitle = "Indonesia is the largest emitter, followed by Vietnam and Malaysia.",
-    x = "CO₂ Emissions (Million Metric Tons)",
+    title = "Power Industry CO2 Emissions in ASEAN (2023)",
+    x = "CO2 Emissions (Million Metric Tons)",
     y = "Country"
   ) +
   theme_minimal(base_size = 14) +
@@ -82,7 +81,6 @@ ggplot(grid_intensity_data, aes(x = ef_gco2_per_kwh, y = country, fill = ef_gco2
   scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
   labs(
     title = "Grid Emission Intensity Across ASEAN",
-    subtitle = "Indonesia and Malaysia have the most carbon-intensive electricity grids.",
     x = "Emission Factor (gCO₂ per kWh)",
     y = "Country"
   ) +
@@ -114,7 +112,6 @@ ggplot(pv_factor_data, aes(x = solar_capacity_factor, y = country)) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1), expand = expansion(mult = c(0, 0.15))) +
   labs(
     title = "Solar PV Capacity Factor in ASEAN Countries",
-    subtitle = "The region shows consistently high potential for solar energy generation.",
     x = "Solar Capacity Factor",
     y = "Country"
   ) +
@@ -169,8 +166,7 @@ ggplot(co2_avoided_data, aes(x = co2_avoided_tons, y = country, fill = co2_avoid
   scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
   scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
   labs(
-    title = "Annual CO₂ Abatement per 5 kW Residential Solar System",
-    subtitle = "The highest impact is seen in countries with the most carbon-intensive grids.",
+    title = "Annual CO₂ Abatement per 5 kW Residential Solar Panel",
     x = "CO₂ Avoided (Metric Tons per Home per Year)",
     y = "Country"
   ) +
@@ -194,7 +190,6 @@ ggplot(homes_required_data, aes(x = homes_required, y = country, fill = homes_re
   scale_x_continuous(labels = scales::comma_format(), expand = expansion(mult = c(0, 0.15))) +
   labs(
     title = "Number of Homes Needed to Achieve a 5% Reduction in Power-Sector CO₂ Emissions",
-    subtitle = "Based on 2023 emissions and a 5 kW solar system per home.",
     x = "Number of Homes Required",
     y = "Country"
   ) +
