@@ -37,6 +37,8 @@ source(compute_abatement_helper_path)
 # [UI]
 
 ui <- dashboardPage(
+    skin  = "green",
+
     dashboardHeader(title = "ASEAN CO2 Emissions Dashboard"),
 
     dashboardSidebar(
@@ -52,15 +54,23 @@ ui <- dashboardPage(
             tabItem(tabName = "overview",
                     fluidRow(
                         box(
-                            title = "Scenario Controls", width = 12, status = "primary", solidHeader = TRUE,
+                            title = "Scenario Controls", width = 12, status = "success", solidHeader = TRUE,
                             column(4, selectInput("ov_country",  "Country", choices = country_list, selected="Philippines")),
                             column(4, selectInput("ov_pv_size",  "PV system size (kW)",  choices=c(3, 5, 10))),
                             column(4, selectInput("ov_co2_target","CO₂ reduction target (%)", choices=c(1, 5, 10))),
                         )
                     ),
-                    valueBoxOutput("homesRequiredBox"),
-                    valueBoxOutput("co2Box"),
-                    valueBoxOutput("capacityBox"),
+                    fluidRow(
+                        valueBoxOutput("homesRequiredBox"),
+                        valueBoxOutput("co2Box"),
+                        valueBoxOutput("capacityBox")
+                    ),
+                    fluidRow(
+                        box(
+                            title = "Homes Required by Country", width = 12, solidHeader = TRUE, status = "success",
+                            plotOutput("homesBar", height = "600px")
+                        )
+                    )
             ),
             tabItem(tabName = "explore",
                     fluidRow(
@@ -161,6 +171,33 @@ server <- function(input, output) {
             theme_minimal()
     })
 
+    output$homesBar <- renderPlot({
+        # Compute homes for every country with current sliders
+        homes_tbl <- lapply(country_list, function(cty) {
+            data.frame(
+                country = cty,
+                homes_required = compute_abatement(
+                    df             = asean_merged_data,
+                    pv_size        = as.numeric(input$ov_pv_size),
+                    target_reduc   = as.numeric(input$ov_co2_target) / 100,
+                    target_country = cty
+                )
+            )
+        }) |> dplyr::bind_rows()
+
+        ggplot(homes_tbl,
+               aes(x = reorder(country, -homes_required),
+                   y = homes_required / 1e6)) +      # show in millions
+            geom_col(fill = "#609870") +
+            labs(x = "Country",
+                 y = "Homes required (million)",
+                 subtitle = paste0("PV ", input$ov_pv_size, " kW  •  ",
+                                   input$ov_co2_target, "% CO₂ cut")) +
+            scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+            theme_minimal(base_size = 13)
+    })
+
+
     # ValueBox in overview
     output$homesRequiredBox <- renderValueBox({
         h <- compute_abatement(
@@ -196,7 +233,7 @@ server <- function(input, output) {
             paste0(format(round(mt_abated, 2), big.mark=","), " Mt"),
             subtitle = "Annual CO₂ abated",
             icon     = icon("cloud"),
-            color    = "green"
+            color    = "olive"
         )
     })
 
