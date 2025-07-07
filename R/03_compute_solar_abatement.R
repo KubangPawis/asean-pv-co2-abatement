@@ -54,7 +54,7 @@ compute_abatement <- function(df, pv_size, target_reduc, target_country, hours_p
 
 out_path <- here(file.path("data", "asean_summary_final.csv"))
 if (!file.exists(out_path)) {
-    write.csv(ds, out_path)
+    write.csv(results_ds, out_path)
     message(out_path, " successfully created")
 } else {
     message("Skipped writing ", out_path, "; file already exists.")
