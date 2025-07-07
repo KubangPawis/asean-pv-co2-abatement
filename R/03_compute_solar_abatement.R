@@ -17,6 +17,7 @@ scenarios <- crossing(PV_SYSTEM_SIZE = pv_system_sizes,
 
 ds_path = here(file.path("data", "asean_merged.csv"))
 ds <- read_csv(ds_path, col_names = TRUE)
+View(ds)
 
 # [Solar Abatement Computations per ASEAN Country]
 

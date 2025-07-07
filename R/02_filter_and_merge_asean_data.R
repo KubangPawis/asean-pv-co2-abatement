@@ -329,6 +329,12 @@ merged_dataset <- full_join(
 
 merged_dataset <- full_join(
     merged_dataset,
+    land_area_data,
+    by = "country"
+)
+
+merged_dataset <- full_join(
+    merged_dataset,
     asean_pv_data,
     by = "country"
 )
