@@ -1,4 +1,5 @@
 library("readxl")
+library("readr")
 
 download_if_missing <- function(url, destfile, mode = "wb") {
     if (!file.exists(destfile)) {
@@ -53,3 +54,22 @@ AverageResidentElectricity <- read.csv(file4)
 # Display the header
 head(AverageResidentElectricity)
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////
+
+# Dataset 5: Land Area Data per Country and Year
+
+## Downloads a .zip file (need to extract)
+url5 <- "https://api.worldbank.org/v2/en/indicator/AG.LND.TOTL.K2?downloadformat=csv"
+zip5 <- file.path("data-raw", "original", "land_area_raw.zip")
+download_if_missing(url5, zip5)
+
+unzipped_files <- unzip(zip5, list=TRUE)
+print(unzipped_files$Name)
+
+csv_file <- unzipped_files$Name[grepl("^API_AG\\.LND\\.TOTL\\.K2_DS2_en_csv_v2_21556\\.csv$", unzipped_files$Name)][1]
+file5 <- file.path("data-raw", "original", csv_file)
+
+land_area_data <- read_csv(file5,
+                           col_names=TRUE,
+                           skip = 4)
+head(land_area_data)
