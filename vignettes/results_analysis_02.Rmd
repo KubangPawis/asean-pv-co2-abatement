@@ -11,6 +11,7 @@ data_path: "data/analysis_results.csv"
 # Introduction
 
 # Setup and Data Import
+
 ```{r}
 
 # Imports
@@ -42,6 +43,7 @@ asean_summary_data <- asean_summary_data %>%
 ```
 
 # Data Analysis
+
 ```{r myplot, fig.width=6, fig.height=5, out.width='70%', dpi=100}
 
 ggplot(asean_summary_data,
@@ -82,4 +84,3 @@ ranks <- asean_summary_data %>%
 
 print(ranks)
 ```
-
