@@ -188,7 +188,7 @@ server <- function(input, output) {
             round_to = 0
         )
         GW_needed <- (homes_required * as.numeric(input$ov_pv_size)) / 1000
-        valueBox(paste0(format(round(GW_needed, 2), big.mark = ","), " GW"), subtitle = "Installed capacity needed", icon = icon("solar-panel"), color = "yellow")
+        valueBox(paste0(format(round(GW_needed, 2), big.mark = ","), " MW"), subtitle = "Installed capacity needed", icon = icon("solar-panel"), color = "yellow")
     })
 
     output$scatter_plot <- renderPlot({
