@@ -33,7 +33,7 @@ summary_final <- read_csv("../data/asean_summary_final.csv")
 
 ```{r plot-co2-emissions}
 # Prepare data for plotting
-power_emissions_2023 <- grid_emission %>%
+power_emissions_2023 <- summary_final %>%
   filter(Sector == "Power Industry", Year == 2023) %>%
   mutate(
     co2_emissions_mt = co2_emissions_g / 1e12, # Convert grams to million metric tons
