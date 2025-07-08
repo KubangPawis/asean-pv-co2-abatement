@@ -69,7 +69,7 @@ Connecting this to grid intensity, the data shows a clear correlation: countries
 
 ```{r plot-grid-emission}
 # Prepare data for plotting
-grid_intensity_data <- summary_final %>%
+grid_intensity_data <- grid_emission %>%
   filter(!is.na(ef_gco2_per_kwh)) %>%
   mutate(country = fct_reorder(country, ef_gco2_per_kwh))
 
@@ -102,7 +102,7 @@ The grid emission factor (EF) is a critical metric that determines the effective
 ### **3. Analysis of Solar Energy Potential**
 ```{r plot-pv-factor}
 # Prepare data for plotting
-pv_factor_data <- summary_final %>%
+pv_factor_data <- pv_potential %>%
   mutate(country = fct_reorder(country, solar_capacity_factor))
 
 # Create the plot
