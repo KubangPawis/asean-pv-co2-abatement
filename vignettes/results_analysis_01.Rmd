@@ -33,7 +33,7 @@ summary_final <- read_csv("../data/asean_summary_final.csv")
 
 ```{r plot-co2-emissions}
 # Prepare data for plotting
-power_emissions_2023 <- summary_final %>%
+power_emissions_2023 <- co2_emissions %>%
   filter(Sector == "Power Industry", Year == 2023) %>%
   mutate(
     co2_emissions_mt = co2_emissions_g / 1e12, # Convert grams to million metric tons
@@ -160,8 +160,8 @@ ggplot(co2_avoided_data, aes(x = co2_avoided_tons, y = country, fill = co2_avoid
   scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
   scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
   labs(
-    title = "Annual CO₂ Abatement per 5 kW Residential Solar Panel",
-    x = "CO₂ Avoided (Metric Tons per Home per Year)",
+    title = "Annual CO2 Abatement per 5 kW Residential Solar Panel",
+    x = "CO2 Avoided (Metric Tons per Home per Year)",
     y = "Country"
   ) +
   theme_minimal(base_size = 14) +
@@ -184,7 +184,7 @@ ggplot(homes_required_data, aes(x = homes_required, y = country, fill = homes_re
   scale_fill_gradient(low = "lightgoldenrod1", high = "darkorange3") +
   scale_x_continuous(labels = scales::comma_format(), expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "Number of Homes Needed to Achieve a 5% Reduction in Power-Sector CO₂ Emissions",
+    title = "Number of Homes Needed to Achieve a 5% Reduction in Power-Sector CO2 Emissions",
     x = "Number of Homes Required",
     y = "Country"
   ) +
