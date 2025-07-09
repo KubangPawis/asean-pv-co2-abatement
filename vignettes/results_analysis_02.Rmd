@@ -17,11 +17,15 @@ data_path: "data/analysis_results.csv"
 # Imports
 library(readr)
 library(tidyr)
+library(dplyr)
 library(ggplot2)
 library(ggrepel)
 library(ggpubr)
 library(knitr)
 library(here)
+library(forcats)
+library(RColorBrewer)
+library(scales)
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -38,7 +42,7 @@ asean_summary_data <- read.csv(asean_summary_path)
 
 # Exlude Brunei analysis for now (no data for Grid EF)
 asean_summary_data <- asean_summary_data %>%
-    filter(`country` %in% country_list)
+    filter(country %in% country_list)
 
 ```
 
@@ -49,7 +53,7 @@ asean_summary_data <- asean_summary_data %>%
 ggplot(asean_summary_data,
        aes(x = TARGET_REDUCTION * 100,
            y = homes_required / 1e6,
-           color = factor(PV_SYSTEM_SIZE)))
+           color = factor(PV_SYSTEM_SIZE))) +
   geom_line(size = 1) +
   facet_wrap(~ country, scales = "free_y") +
   scale_x_continuous(breaks = c(1,5,10)) +
@@ -84,3 +88,39 @@ ranks <- asean_summary_data %>%
 
 print(ranks)
 ```
+```{r myplot, fig.width=6, fig.height=5, out.width='70%', dpi=200}
+# Chart for Homes
+plot_homes <- ggplot(ranks, aes(x = homes_required, y = fct_reorder(country, homes_required))) +
+  geom_col(aes(fill = country)) +
+  geom_text(aes(label = sprintf("%.1f M", homes_required / 1e6),
+                hjust = ifelse(homes_required / 1e6 < 0.5, -0.1, 1.2)),
+            vjust = 0.4,
+            color = ifelse(ranks$homes_required / 1e6 < 0.5, "black", "white"),  
+            size = 3.5) +
+  scale_x_continuous(labels = label_number(scale = 1e-6, suffix = " M")) +
+  scale_fill_brewer(palette = "Paired") +
+  labs(title = "Total Homes Required", x = "Homes (Millions)", y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none") +
+  coord_cartesian(clip = "off") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.2)))
+
+# Chart for Land Area
+plot_area <- ggplot(ranks, aes(x = land_area_km2, y = fct_reorder(country, land_area_km2))) +
+  geom_col(aes(fill = country)) +
+  geom_text(aes(label = sprintf("%.1f km²", land_area_km2 / 1e3),
+                hjust = ifelse(land_area_km2 / 1e3 < 250, -0.1, 1.05)),  
+            vjust = 0.4,
+            color = ifelse(ranks$land_area_km2 / 1e3 < 250, "black", "white"),  
+            size = 3.5) +
+  scale_x_continuous(labels = label_number(scale = 1e-3, suffix = "K")) +
+  scale_fill_brewer(palette = "Paired") +
+  labs(title = "Total Land Area", x = "Area (Thousand km²)", y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none") +
+  coord_cartesian(clip = "off") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.2)))
+
+ggarrange(plot_homes, plot_area, ncol = 1, nrow = 2)
+```
+
