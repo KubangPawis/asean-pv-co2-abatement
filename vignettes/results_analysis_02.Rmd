@@ -122,5 +122,14 @@ plot_area <- ggplot(ranks, aes(x = land_area_km2, y = fct_reorder(country, land_
   scale_x_continuous(expand = expansion(mult = c(0, 0.2)))
 
 ggarrange(plot_homes, plot_area, ncol = 1, nrow = 2)
+
+combined_plot <- ggarrange(plot_homes, plot_area, ncol = 1, nrow = 2)
+
+annotate_figure(
+  combined_plot,
+  top = text_grob("Housing Needs and Land Area: A Country-Level Comparison", 
+                  face = "bold", size = 14)
+)
+
 ```
 
